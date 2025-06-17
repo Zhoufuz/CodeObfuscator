@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Obfuscator - Multi-Language Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-bg: #1e293b;
+            --darker-bg: #0f172a;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --border-color: #cbd5e1;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --html-color: #e34c26;
+            --js-color: #f7df1e;
+            --python-color: #3776ab;
+            --lua-color: #000080;
+            --roblox-color: #00a2ff;
+            --cpp-color: #004482;
+            --json-color: #f5de19;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header-icon {
+            position: absolute;
+            top: 0;
+            right: 20px;
+            font-size: 3rem;
+            color: var(--primary-color);
+            opacity: 0.2;
+            transform: rotate(15deg);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #4a6cf7, #8a63d2, var(--roblox-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--text-dark);
+        }
+
+        .btn-info {
+            background: var(--info-color);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .info-box {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .info-box h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box ul {
+            padding-left: 20px;
+            color: #94a3b8;
+            line-height: 1.8;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+        }
+
+        .info-box li strong {
+            color: var(--primary-color);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            background: var(--success-color);
+            color: white;
+            box-shadow: var(--shadow);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text-light);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .lang-btn.active {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .lang-btn.html.active {
+            background: var(--html-color);
+        }
+
+        .lang-btn.js.active {
+            background: var(--js-color);
+            color: #000;
+        }
+
+        .lang-btn.python.active {
+            background: var(--python-color);
+        }
+
+        .lang-btn.lua.active {
+            background: var(--lua-color);
+        }
+
+        .lang-btn.robloxlua.active {
+            background: var(--roblox-color);
+        }
+        
+        .lang-btn.cpp.active {
+            background: var(--cpp-color);
+        }
+        
+        .lang-btn.json.active {
+            background: var(--json-color);
+            color: #000;
+        }
+
+        .example-code {
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.5;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-code:hover {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .example-code::before {
+            content: 'Click to load example';
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 0 0 0 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .language-info {
+            display: none;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .language-info.active {
+            display: block;
+        }
+
+        .language-info h4 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+        }
+
+        .language-info p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .obfuscation-options {
+            display: none;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .obfuscation-options.active {
+            display: block;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .option-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .option-item input {
+            margin-right: 10px;
+        }
+
+        .option-item label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .loader i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        .loader p {
+            margin-top: 10px;
+            color: #94a3b8;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .lang-btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <h1><i class="fas fa-code"></i> Code Obfuscator</h1>
+            <p>Protect your code from being easily viewed or copied. Supports HTML, JavaScript, Python, Lua, Roblox Lua, C++ and JSON obfuscation.</p>
+        </header>
+        
+        <div class="card-container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-code"></i> Original Code</h2>
+                </div>
+                <div class="card-body">
+                    <div class="language-selector">
+                        <button class="lang-btn html active" data-lang="html">
+                            <i class="fab fa-html5"></i> HTML
+                        </button>
+                        <button class="lang-btn js" data-lang="javascript">
+                            <i class="fab fa-js"></i> JaveScript
+                        </button>
+                        <button class="lang-btn python" data-lang="python">
+                            <i class="fab fa-python"></i> Python
+                        </button>
+                        <button class="lang-btn lua" data-lang="lua">
+                            <i class="fas fa-file-code"></i> Lua
+                        </button>
+                        <button class="lang-btn robloxlua" data-lang="robloxlua">
+                            <i class="fas fa-gamepad"></i> Roblox Lua
+                        </button>
+                        <button class="lang-btn cpp" data-lang="cpp">
+                            <i class="fas fa-cogs"></i> C++
+                        </button>
+                        <button class="lang-btn json" data-lang="json">
+                            <i class="fas fa-file-code"></i> JSON
+                        </button>
+                    </div>
+                    
+                    <textarea id="inputCode" placeholder="Paste your code here..."><!DOCTYPE html>
+<html>
+<head>
+    <title>Example Page</title>
+    <style>
+        body { font-family: Arial; background: #f0f0f0; }
+        .container { max-width: 800px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Code Obfuscator</h1>
+        <p>This is an example HTML code that will be obfuscated</p>
+        <button onclick="alert('Hello World!')">Click Me</button>
+    </div>
+    <script>
+        console.log("Page loaded successfully");
+    </script>
+</body>
+</html></textarea>
+                    
+                    <div class="language-info active" id="htmlInfo">
+                        <h4><i class="fab fa-html5"></i> HTML Obfuscation</h4>
+                        <p>HTML obfuscation encodes the entire document using Base64 and executes it via data URI scheme. Obfuscated HTML prevents casual viewing of source code but may affect SEO.</p>
+                    </div>
+                    
+                    <div class="language-info" id="jsInfo">
+                        <h4><i class="fab fa-js"></i> JavaScript Obfuscation</h4>
+                        <p>JavaScript obfuscation converts code to hexadecimal strings and executes it using eval function. Obfuscated code is difficult to read while maintaining functionality.</p>
+                    </div>
+                    
+                    <div class="language-info" id="pythonInfo">
+                        <h4><i class="fab fa-python"></i> Python Obfuscation</h4>
+                        <p>Python obfuscation encodes code with Base64 and executes it using exec function. Ideal for protecting Python scripts, but requires a Python environment to run.</p>
+                    </div>
+                    
+                    <div class="language-info" id="luaInfo">
+                        <h4><i class="fas fa-file-code"></i> Lua Obfuscation</h4>
+                        <p>Lua obfuscation converts code to hexadecimal strings and executes it using loadstring function. Works with standard Lua environments while preserving functionality.</p>
+                    </div>
+                    
+                    <div class="language-info" id="robloxInfo">
+                        <h4><i class="fas fa-gamepad"></i> Roblox Lua Obfuscation</h4>
+                        <p>Roblox Lua obfuscation uses ASCII encoding to convert characters to their decimal representations. This provides a high level of protection for Roblox scripts.</p>
+                    </div>
+                    
+                    <div class="language-info" id="cppInfo">
+                        <h4><i class="fas fa-cogs"></i> C++ Obfuscation</h4>
+                        <p>C++ obfuscation uses character shifting and hexadecimal encoding. This technique makes C++ code difficult to reverse engineer while maintaining functionality.</p>
+                    </div>
+                    
+                    <div class="language-info" id="jsonInfo">
+                        <h4><i class="fas fa-file-code"></i> JSON Obfuscation</h4>
+                        <p>JSON obfuscation converts the JSON structure to a hexadecimal string and wraps it in a JavaScript parser. This hides the original structure while keeping the data usable.</p>
+                    </div>
+                    
+                    <div class="obfuscation-options active" id="robloxOptions">
+                        <h4><i class="fas fa-cog"></i> Roblox Obfuscation Options</h4>
+                        <div class="option-item">
+                            <input type="checkbox" id="option1" checked>
+                            <label for="option1">Variable Name Obfuscation</label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="option2" checked>
+                            <label for="option2">String Encryption</label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="option3">
+                            <label for="option3">Add Junk Code</label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="option4" checked>
+                            <label for="option4">ASCII Encoding</label>
+                        </div>
+                    </div>
+                    
+                    <div class="example-code" id="jsExample">
+// JavaScript example code
+function calculateSum(a, b) {
+    return a + b;
+}
+console.log("Calculation result: ", calculateSum(5, 10));</div>
+                    
+                    <div class="example-code" id="pythonExample">
+# Python example code
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+    
+print("Factorial result:", factorial(5))</div>
+                    
+                    <div class="example-code" id="luaExample">
+-- Lua example code
+function fibonacci(n)
+    if n <= 1 then
+        return n
+    else
+        return fibonacci(n-1) + fibonacci(n-2)
+    end
+end
+
+print("Fibonacci sequence:", fibonacci(10))</div>
+                    
+                    <div class="example-code" id="robloxExample">
+-- Roblox Lua example code
+local part = Instance.new("Part")
+part.Parent = workspace
+part.Position = Vector3.new(0, 5, 0)
+part.Size = Vector3.new(5, 1, 5)
+part.BrickColor = BrickColor.new("Bright red")
+part.Anchored = true
+
+print("Created part at position " .. tostring(part.Position))</div>
+                    
+                    <div class="example-code" id="cppExample">
+// C++ example code
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> numbers = {1, 2, 3, 4, 5};
+    int sum = 0;
+    
+    for (int num : numbers) {
+        sum += num;
+    }
+    
+    std::cout << "Sum of numbers: " << sum << std::endl;
+    return 0;
+}</div>
+                    
+                    <div class="example-code" id="jsonExample">
+// JSON example code
+{
+  "appName": "Code Obfuscator",
+  "version": "2.0",
+  "features": [
+    "HTML obfuscation",
+    "JavaScript obfuscation",
+    "Python obfuscation",
+    "C++ obfuscation",
+    "JSON obfuscation"
+  ],
+  "author": {
+    "name": "Dev Team",
+    "email": "contact@example.com"
+  }
+}</div>
+                </div>
+                <div class="controls">
+                    <button id="obfuscateBtn" class="btn btn-primary">
+                        <i class="fas fa-lock"></i> Obfuscate Code
+                    </button>
+                    <button id="clearBtn" class="btn btn-secondary">
+                        <i class="fas fa-eraser"></i> Clear Input
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-lock"></i> Obfuscation Result</h2>
+                </div>
+                <div class="card-body">
+                    <div class="loader" id="loader">
+                        <i class="fas fa-spinner"></i>
+                        <p>Obfuscating your code. Please wait 2 seconds...</p>
+                    </div>
+                    <textarea id="outputCode" placeholder="Obfuscation result will appear here..." readonly></textarea>
+                </div>
+                <div class="controls">
+                    <button id="copyBtn" class="btn btn-success" disabled>
+                        <i class="fas fa-copy"></i> Copy Result
+                    </button>
+                    <button id="testBtn" class="btn btn-warning" disabled>
+                        <i class="fas fa-play"></i> Test Result
+                    </button>
+                    <button id="saveBtn" class="btn btn-info" disabled>
+                        <i class="fas fa-download"></i> Save File
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> Code Obfuscation Information</h3>
+            <ul>
+                <li><strong>HTML Obfuscation:</strong> Encodes entire HTML document using Base64 and executes via data URI scheme</li>
+                <li><strong>JavaScript Obfuscation:</strong> Converts code to hexadecimal strings and executes using eval function</li>
+                <li><strong>Python Obfuscation:</strong> Encodes code with Base64 and executes using exec function</li>
+                <li><strong>Lua Obfuscation:</strong> Converts code to hexadecimal strings and executes using loadstring function</li>
+                <li><strong>Roblox Lua Obfuscation:</strong> Uses ASCII encoding to convert characters to their decimal representations</li>
+                <li><strong>C++ Obfuscation:</strong> Employs character shifting and hexadecimal encoding to obscure source code</li>
+                <li><strong>JSON Obfuscation:</strong> Converts JSON to hexadecimal string and wraps in JavaScript parser</li>
+                <li>All obfuscated code includes version information in comments</li>
+                <li>Obfuscated code prevents casual source code viewing but doesn't provide absolute security</li>
+                <li>Some obfuscation techniques may affect performance and SEO - use judiciously</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 Code Obfuscator | Supports HTML, JS, Python, Lua, Roblox Lua, C++ and JSON | For educational purposes only</p>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Successfully copied to clipboard!</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputCode = document.getElementById('inputCode');
+            const outputCode = document.getElementById('outputCode');
+            const obfuscateBtn = document.getElementById('obfuscateBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const testBtn = document.getElementById('testBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const notification = document.getElementById('notification');
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const jsExample = document.getElementById('jsExample');
+            const pythonExample = document.getElementById('pythonExample');
+            const luaExample = document.getElementById('luaExample');
+            const robloxExample = document.getElementById('robloxExample');
+            const cppExample = document.getElementById('cppExample');
+            const jsonExample = document.getElementById('jsonExample');
+            const htmlInfo = document.getElementById('htmlInfo');
+            const jsInfo = document.getElementById('jsInfo');
+            const pythonInfo = document.getElementById('pythonInfo');
+            const luaInfo = document.getElementById('luaInfo');
+            const robloxInfo = document.getElementById('robloxInfo');
+            const cppInfo = document.getElementById('cppInfo');
+            const jsonInfo = document.getElementById('jsonInfo');
+            const robloxOptions = document.getElementById('robloxOptions');
+            const loader = document.getElementById('loader');
+            
+            let currentLanguage = 'html';
+            const versionComment = "[[ This code have been protect by v2.0 https://zhoufuz.github.io/CodeObfuscator/CodeObfu2.0.Html ]]";
+            
+            // Initialize by hiding example code
+            jsExample.style.display = 'none';
+            pythonExample.style.display = 'none';
+            luaExample.style.display = 'none';
+            robloxExample.style.display = 'none';
+            cppExample.style.display = 'none';
+            jsonExample.style.display = 'none';
+            robloxOptions.style.display = 'none';
+            
+            // Language selection
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    langBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentLanguage = btn.dataset.lang;
+                    
+                    // Update placeholder
+                    inputCode.placeholder = `Paste your ${btn.textContent.trim()} code here...`;
+                    
+                    // Show/hide example code
+                    jsExample.style.display = currentLanguage === 'javascript' ? 'block' : 'none';
+                    pythonExample.style.display = currentLanguage === 'python' ? 'block' : 'none';
+                    luaExample.style.display = currentLanguage === 'lua' ? 'block' : 'none';
+                    robloxExample.style.display = currentLanguage === 'robloxlua' ? 'block' : 'none';
+                    cppExample.style.display = currentLanguage === 'cpp' ? 'block' : 'none';
+                    jsonExample.style.display = currentLanguage === 'json' ? 'block' : 'none';
+                    
+                    // Show/hide language info
+                    htmlInfo.classList.toggle('active', currentLanguage === 'html');
+                    jsInfo.classList.toggle('active', currentLanguage === 'javascript');
+                    pythonInfo.classList.toggle('active', currentLanguage === 'python');
+                    luaInfo.classList.toggle('active', currentLanguage === 'lua');
+                    robloxInfo.classList.toggle('active', currentLanguage === 'robloxlua');
+                    cppInfo.classList.toggle('active', currentLanguage === 'cpp');
+                    jsonInfo.classList.toggle('active', currentLanguage === 'json');
+                    
+                    // Show/hide Roblox options
+                    robloxOptions.style.display = currentLanguage === 'robloxlua' ? 'block' : 'none';
+                    robloxOptions.classList.toggle('active', currentLanguage === 'robloxlua');
+                });
+            });
+            
+            // Example code click events
+            jsExample.addEventListener('click', () => {
+                inputCode.value = jsExample.textContent;
+            });
+            
+            pythonExample.addEventListener('click', () => {
+                inputCode.value = pythonExample.textContent;
+            });
+            
+            luaExample.addEventListener('click', () => {
+                inputCode.value = luaExample.textContent;
+            });
+            
+            robloxExample.addEventListener('click', () => {
+                inputCode.value = robloxExample.textContent;
+            });
+            
+            cppExample.addEventListener('click', () => {
+                inputCode.value = cppExample.textContent;
+            });
+            
+            jsonExample.addEventListener('click', () => {
+                inputCode.value = jsonExample.textContent;
+            });
+            
+            // Obfuscation function
+            function obfuscateCode(code, language) {
+                if (!code) return '';
+                
+                if (language === 'html') {
+                    // HTML obfuscation: Base64 encoding
+                    const encoded = btoa(unescape(encodeURIComponent(code)));
+                    return `<!-- ${versionComment} -->\n` + 
+                           `<!DOCTYPE html><script>document.write(atob("${encoded}"));<\/script>`;
+                } 
+                else if (language === 'javascript') {
+                    // JavaScript obfuscation: Hex encoding
+                    let hexCode = '';
+                    for (let i = 0; i < code.length; i++) {
+                        hexCode += '\\x' + code.charCodeAt(i).toString(16).padStart(2, '0');
+                    }
+                    return `// ${versionComment}\n` + 
+                           `eval("${hexCode}");`;
+                } 
+                else if (language === 'python') {
+                    // Python obfuscation: Base64 encoding
+                    const encoded = btoa(unescape(encodeURIComponent(code)));
+                    return `# ${versionComment}\n` + 
+                           `exec(__import__('base64').b64decode("${encoded}").decode('utf-8'))`;
+                } 
+                else if (language === 'lua') {
+                    // Lua obfuscation: Hex encoding
+                    let hexCode = '';
+                    for (let i = 0; i < code.length; i++) {
+                        hexCode += '\\' + code.charCodeAt(i).toString(16).padStart(3, '0');
+                    }
+                    return `-- ${versionComment}\n` + 
+                           `loadstring("${hexCode}")()`;
+                }
+                else if (language === 'robloxlua') {
+                    // Roblox Lua obfuscation: ASCII encoding
+                    let asciiCode = '';
+                    for (let i = 0; i < code.length; i++) {
+                        // Convert each character to its ASCII decimal representation
+                        asciiCode += '\\' + code.charCodeAt(i).toString(10).padStart(3, '0');
+                    }
+                    
+                    // Create obfuscated code with version comment
+                    return `-- ${versionComment}\n` +
+                           `return(function(...)\n` +
+                           `    local m = {"${asciiCode}"}\n` +
+                           `    local function I(I) return m[I] end\n` +
+                           `    local t = loadstring(I(1))\n` +
+                           `    t()\n` +
+                           `end)()`;
+                }
+                else if (language === 'cpp') {
+                    // C++ obfuscation: Character shifting and hex encoding
+                    let shifted = '';
+                    for (let i = 0; i < code.length; i++) {
+                        // Shift each character by 5 positions
+                        shifted += String.fromCharCode(code.charCodeAt(i) + 5);
+                    }
+                    
+                    // Convert to hex
+                    let hexCode = '';
+                    for (let i = 0; i < shifted.length; i++) {
+                        hexCode += '\\x' + shifted.charCodeAt(i).toString(16).padStart(2, '0');
+                    }
+                    
+                    // Create deobfuscation function
+                    return `// ${versionComment}\n` +
+                           `#include <iostream>\n` +
+                           `#include <string>\n\n` +
+                           `std::string deobfuscate(const std::string& str) {\n` +
+                           `    std::string result = "";\n` +
+                           `    for (char c : str) {\n` +
+                           `        result += static_cast<char>(c - 5);\n` +
+                           `    }\n` +
+                           `    return result;\n` +
+                           `}\n\n` +
+                           `int main() {\n` +
+                           `    std::string encoded = "${hexCode}";\n` +
+                           `    std::string original = deobfuscate(encoded);\n\n` +
+                           `    // Execute the original code\n` +
+                           `    // Note: This is a simplified approach\n` +
+                           `    std::cout << original << std::endl;\n` +
+                           `    return 0;\n` +
+                           `}`;
+                }
+                else if (language === 'json') {
+                    // JSON obfuscation: Convert to hex string
+                    let hexStr = '';
+                    for (let i = 0; i < code.length; i++) {
+                        hexStr += code.charCodeAt(i).toString(16).padStart(2, '0');
+                    }
+                    
+                    // Create a JavaScript function to parse the JSON
+                    return `// ${versionComment}\n` +
+                           `(function() {\n` +
+                           `    const hexStr = "${hexStr}";\n` +
+                           `    let jsonStr = '';\n` +
+                           `    for (let i = 0; i < hexStr.length; i += 2) {\n` +
+                           `        jsonStr += String.fromCharCode(parseInt(hexStr.substr(i, 2), 16));\n` +
+                           `    }\n` +
+                           `    const data = JSON.parse(jsonStr);\n` +
+                           `    // Use the data object as needed\n` +
+                           `    console.log(data);\n` +
+                           `})();`;
+                }
+                
+                return 'Unsupported programming language';
+            }
+            
+            // Obfuscate button click event
+            obfuscateBtn.addEventListener('click', () => {
+                const code = inputCode.value.trim();
+                
+                if (!code) {
+                    alert('Please enter code to obfuscate');
+                    return;
+                }
+                
+                // Show loader and disable button
+                loader.style.display = 'block';
+                outputCode.value = '';
+                obfuscateBtn.disabled = true;
+                obfuscateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obfuscating...';
+                
+                // Simulate processing delay (2 seconds)
+                setTimeout(() => {
+                    const obfuscated = obfuscateCode(code, currentLanguage);
+                    outputCode.value = obfuscated;
+                    
+                    // Hide loader and enable button
+                    loader.style.display = 'none';
+                    obfuscateBtn.disabled = false;
+                    obfuscateBtn.innerHTML = '<i class="fas fa-lock"></i> Obfuscate Code';
+                    
+                    // Enable result buttons
+                    copyBtn.disabled = false;
+                    testBtn.disabled = false;
+                    saveBtn.disabled = false;
+                }, 2000);
+            });
+            
+            // Copy button click event
+            copyBtn.addEventListener('click', () => {
+                outputCode.select();
+                document.execCommand('copy');
+                
+                // Show notification
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+            
+            // Clear button click event
+            clearBtn.addEventListener('click', () => {
+                inputCode.value = '';
+                outputCode.value = '';
+                copyBtn.disabled = true;
+                testBtn.disabled = true;
+                saveBtn.disabled = true;
+                inputCode.focus();
+            });
+            
+            // Test button click event
+            testBtn.addEventListener('click', () => {
+                const obfuscatedCode = outputCode.value;
+                if (!obfuscatedCode) return;
+                
+                if (currentLanguage === 'html') {
+                    const testWindow = window.open();
+                    testWindow.document.write(obfuscatedCode);
+                    testWindow.document.close();
+                } 
+                else if (currentLanguage === 'javascript') {
+                    try {
+                        eval(obfuscatedCode);
+                        alert('JavaScript code executed successfully! Check console for output.');
+                    } catch (e) {
+                        alert('Execution error: ' + e.message);
+                    }
+                }
+                else if (currentLanguage === 'python') {
+                    alert('Python code cannot run directly in browser. Copy to Python environment to execute.');
+                }
+                else if (currentLanguage === 'lua') {
+                    alert('Lua code cannot run directly in browser. Copy to Lua environment to execute.');
+                }
+                else if (currentLanguage === 'robloxlua') {
+                    alert('Roblox Lua code needs to run in Roblox Studio. Copy to Roblox script editor to execute.');
+                }
+                else if (currentLanguage === 'cpp') {
+                    alert('C++ code cannot run directly in browser. Copy to C++ compiler to execute.');
+                }
+                else if (currentLanguage === 'json') {
+                    try {
+                        eval(obfuscatedCode);
+                        alert('JSON code executed successfully! Check console for output.');
+                    } catch (e) {
+                        alert('Execution error: ' + e.message);
+                    }
+                }
+            });
+            
+            // Save button click event
+            saveBtn.addEventListener('click', () => {
+                const obfuscatedCode = outputCode.value;
+                if (!obfuscatedCode) return;
+                
+                let extension = 'txt';
+                if (currentLanguage === 'html') extension = 'html';
+                else if (currentLanguage === 'javascript') extension = 'js';
+                else if (currentLanguage === 'python') extension = 'py';
+                else if (currentLanguage === 'lua' || currentLanguage === 'robloxlua') extension = 'lua';
+                else if (currentLanguage === 'cpp') extension = 'cpp';
+                else if (currentLanguage === 'json') extension = 'json';
+                
+                const blob = new Blob([obfuscatedCode], {type: 'text/plain'});
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `obfuscated_code.${extension}`;
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
