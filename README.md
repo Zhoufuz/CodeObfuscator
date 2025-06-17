@@ -1,6 +1,6 @@
 # CodeObfuscator
 
-***You can use the tool at  https://zhoufuz.github.io/CodeObfuscator/CodeObfu2.0.Html***
+***You can use the tool at  https://zhoufuz.github.io/CodeObfuscator/CodeObfu2.0.html***
 
 **Code Obfuscator Web Tool**  
 This webpage provides a multi-language code obfuscation tool designed to protect source code from unauthorized viewing or copying. Featuring a modern dark-themed interface with gradient backgrounds and responsive card layouts, it supports seven programming languages: HTML, JavaScript, Python, Lua, Roblox Lua, C++, and JSON.
